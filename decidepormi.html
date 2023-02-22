@@ -1,0 +1,224 @@
+Decide Por Mi
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Decide Por Mi</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }     
+      form {
+        margin-bottom: 20px;
+      }     
+      input[type="text"] {
+        width: 200px;
+        padding: 5px;
+        margin-bottom: 5px;
+        border: 1px solid #ccc;
+      }      
+      button {
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }     
+      button:hover {
+        background-color: #3e8e41;
+      }
+      h1, h2 {
+        text-align: center;
+      }
+     
+      #roulette {
+        display: inline-block;
+        border: 2px solid black;
+        border-radius: 50%;
+        width: 300px;
+        height: 300px;
+        padding: 10px;
+        text-align: center;
+        position: relative;
+      }
+      #roulette .option {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        font-size: 18px;
+        line-height: 1.5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transform-origin: center center;
+        border-radius: 50%;
+      }
+      #roulette .option:nth-child(1) {
+        transform: rotate(60deg);
+        border-color: #e74c3c transparent transparent transparent;
+      }
+      #roulette .option:nth-child(2) {
+        transform: rotate(120deg);
+        border-color: #3498db transparent transparent transparent;
+      }
+      #roulette .option:nth-child(3) {
+        transform: rotate(180deg);
+        border-color: #2ecc71 transparent transparent transparent;
+      }
+      #roulette .option:nth-child(4) {
+        transform: rotate(240deg);
+        border-color: #f39c12 transparent transparent transparent;
+      }
+      #roulette .option:nth-child(5) {
+        transform: rotate(300deg);
+        border-color: #ffeb3b transparent transparent transparent;
+      }
+      #roulette .option:nth-child(6) {
+        transform: rotate(360deg);
+        border-color: #9b59b6 transparent transparent transparent;
+      }
+      #roulette.spin .option {
+        animation: spin 3s ease-in-out forwards;
+        transform: rotate(720deg);
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(1080deg);
+        }
+      }
+    </style>
+  </head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1469339226938965"
+     crossorigin="anonymous"></script>
+  <body>
+    <h1>Ingrese sus opciones:</h1>
+    <form>
+      <input type="text" name="option" placeholder="Opción 1">
+      <br>
+      <input type="text" name="option" placeholder="Opción 2">
+      <br>
+      <input type="text" name="option" placeholder="Opción 3">
+      <br>
+      <input type="text" name="option" placeholder="Opción 4">
+      <br>
+      <input type="text" name="option" placeholder="Opción 5">
+      <br>
+      <input type="text" name="option" placeholder="Opción 6">
+      <br>
+      <!-- Agregar más campos de texto según sea necesario -->
+      <button type="button" onclick="spin()">Girar la ruleta</button>
+      <button id="reset">Reiniciar</button>
+    </form>
+    <script>
+          const colors = ["#FF4136", "#0074D9", "#2ECC40", "#FF851B", "#FFDC00", "#B10DC9"];
+          let options = [];
+function spin() {
+  const optionValues = [];
+  const optionsInputs = document.getElementsByName("option");
+  for (let i = 0; i < optionsInputs.length; i++) {
+    const optionValue = optionsInputs[i].value.trim();
+    if (optionValue !== "") {
+      optionValues.push(optionValue);
+    }
+  }
+  if (optionValues.length < 2) {
+    alert("Ingrese al menos dos opciones.");
+    return;
+  }
+  options = optionValues;
+  const numOptions = options.length;
+  const spinDuration = 3000; // 3 segundos
+  const spinAngle = 1080; // 3 vueltas completas
+  const randomIndex = Math.floor(Math.random() * numOptions);
+  const winningOption = options[randomIndex];
+  const roulette = document.getElementById("roulette");
+  roulette.classList.add("spin");
+  const optionElements = roulette.getElementsByClassName("option");
+  for (let i = 0; i < numOptions; i++) {
+    const optionElement = optionElements[i];
+    const optionValue = options[i % numOptions];
+    optionElement.innerHTML = optionValue;
+  }
+  const spinAnimation = roulette.animate(
+    [{ transform: "rotate(0deg)" }, { transform: `rotate(${spinAngle}deg)` }],
+    { duration: spinDuration, easing: "cubic-bezier(0.1, 0.8, 0.7, 1)" }
+  );
+  spinAnimation.addEventListener("finish", () => {
+    roulette.classList.remove("spin"); // aquí se remueve la clase "spin"
+    document.getElementById("result").textContent = `¡La opción ganadora es "${winningOption}"!`;
+  });
+}
+function drawRoulette() {
+  const roulette = document.getElementById("roulette");
+  const rouletteNumber = document.getElementById("roulette-number");
+  roulette.innerHTML = "";
+  rouletteNumber.innerHTML = "";
+  const coloredOptions = options.map((option, index) => {
+    return {
+      text: option,
+      color: colors[index % colors.length]
+    };
+  });
+  const numOptions = coloredOptions.length;
+  const angles = Array.from({ length: numOptions }, (_, i) => i * (360 / numOptions));
+  coloredOptions.forEach((option, index) => {
+    const angle = angles[index];
+    const section = document.createElement("div");
+    section.classList.add("option");
+    section.style.width = "0";
+    section.style.height = "0";
+    section.style.borderLeft = "100px solid transparent";
+    section.style.borderRight = "100px solid transparent";
+    section.style.borderBottom = "100px solid " + option.color;
+    section.style.transform = "rotate(" + angle + "deg)";
+    section.style.position = "absolute";
+    section.style.top = "0";
+    section.style.left = "0";
+    section.style.transformOrigin = "bottom center";
+    roulette.appendChild(section);
+    const number = document.createElement("div");
+    number.innerHTML = option.text;
+    number.style.transform = "rotate(" + (angle + (360 / numOptions) / 2) + "deg)";
+    number.style.position = "absolute";
+    number.style.top = "20px";
+    number.style.left = "50%";
+    number.style.transformOrigin = "bottom center";
+    number.style.color = "#fff";
+    number.style.fontWeight = "bold";
+    number.style.fontSize = "24px";
+    rouletteNumber.appendChild(number);
+  });
+}
+function resetRoulette() {
+  const roulette = document.getElementById("roulette");
+  const optionElements = roulette.getElementsByClassName("option");
+  for (let i = 0; i < optionElements.length; i++) {
+    optionElements[i].textContent = "";
+  }
+  document.getElementById("result").textContent = "";
+  // Elimina la clase "spin" para que la animación se reinicie
+  roulette.classList.remove("spin");
+  const resetButton = document.getElementById("reset");
+resetButton.addEventListener("click", resetRoulette);
+}
+</script>
+<br>
+<h2 id="result">
+  <div id="roulette">
+    <div class="option 1"></div>
+    <div class="option 2"></div>
+    <div class="option 3"></div>
+    <div class="option 4"></div>
+    <div class="option 5"></div>
+    <div class="option 6"></div>
+  </div>
+</h2>
+    </script>
+    <p>Creado por: CANARIOag</p>
+  </body>
+</html>
